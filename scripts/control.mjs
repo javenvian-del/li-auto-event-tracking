@@ -12,6 +12,7 @@ const root=path.dirname(fileURLToPath(import.meta.url)),args=process.argv.slice(
 const option=name=>{const i=args.indexOf(name);return i<0?undefined:args[i+1]};
 const data=path.resolve(process.env.LI_AUTO_TRACKING_DATA||path.join(os.homedir(),'Documents','Codex','li-auto-event-tracking-data'));
 const configFile=path.join(data,'config.json');
+const guideVersion=2;
 const child=(file,cfg,extra=[],stdio='inherit')=>new Promise((resolve,reject)=>{
  const p=spawn(process.execPath,[path.join(root,file),...extra,'--config',cfg],{stdio});
  p.once('error',reject);p.once('exit',(code,signal)=>resolve({code,signal}));
@@ -34,11 +35,11 @@ async function main(){
   const updateOptions = option('--downloaded-source') ? {download:folderDownloader(option('--downloaded-source'),await loadUpdateSource(data))} : {};
   if(command==='update') {console.log(JSON.stringify(await applyUpdate(skillRoot,{...updateOptions,version:option('--version'),confirmed:args.includes('--confirmed')})));return;}
   if(command==='doctor'){console.log(JSON.stringify(await doctor()));return;}
-  if(command==='guide-seen'){await saveJSON(path.join(data,'onboarding.json'),{guideVersion:1,shownAt:new Date().toISOString()});console.log('{"status":"saved"}');return;}
+  if(command==='guide-seen'){await saveJSON(path.join(data,'onboarding.json'),{guideVersion,shownAt:new Date().toISOString()});console.log('{"status":"saved"}');return;}
   const update=await checkUpdate(skillRoot,updateOptions);
   if(command==='update-check'){console.log(JSON.stringify(update));return;}
   const guide=await fs.readFile(path.join(data,'onboarding.json'),'utf8').then(JSON.parse).catch(()=>null);
-  console.log(JSON.stringify({update,environment:await doctor(),guideNeeded:guide?.guideVersion!==1}));return;
+  console.log(JSON.stringify({update,environment:await doctor(),guideNeeded:guide?.guideVersion!==guideVersion}));return;
  }
  if(command==='draft-prepare'||command==='review-create'){
   const result=await child(command==='draft-prepare'?'draft-prepare.mjs':'review-create.mjs',configFile,args.slice(1));process.exitCode=result.code??1;return;

@@ -16,10 +16,9 @@ async function walk(folder = '') {
 }
 await walk();
 const release = validateRelease({schemaVersion: 1, version: pkg.version, notes: [
-  '独立技能代码仓库支持免 GitHub 登录的一条命令安装，自动准备本机运行环境。',
-  '每次调用检查云端版本，使用者确认后更新；保留本机配置和登录状态。',
-  '兼容 PRD 已有埋点表、无埋点表及缺少截图；PRD 图片优先，缺图时从平台精确匹配页面补齐。',
-  '新增首次使用指南和环境检查，支持 Codex、Claude Code 及其他具备本机执行能力的 AI 客户端。'
+  '统一首次使用介绍：明确在用户增长运营中心快速批量创建埋点，并自动回写事件名称和事件标识。',
+  '按核心功能、怎么使用、使用前准备三段展示；已看过旧介绍的用户升级后补展示一次。',
+  '每次调用检查云端版本，使用者确认后更新；保留本机配置和登录状态。'
 ], files: Object.fromEntries(Object.entries(files).sort())});
 await fs.writeFile(path.join(root, 'release.json'), JSON.stringify(release, null, 2) + '\n');
 console.log(JSON.stringify({version: pkg.version, files: Object.keys(files).length}));
