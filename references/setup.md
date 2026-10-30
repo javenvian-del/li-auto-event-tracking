@@ -41,7 +41,7 @@ curl -fsSL https://raw.githubusercontent.com/javenvian-del/li-auto-event-trackin
 - 检查记录绑定当前目录、更新源、版本和发布清单摘要。确认后源或清单变化，重新检查并确认；下载逐文件校验，失败不替换当前安装。
 - 更新只替换本次调用的技能目录。其他客户端下次调用各自检查；统一安装可显式选择 both。
 - 更新先准备完整目录和依赖，再备份旧版并替换。不得删除未知锁或关闭使用者自己的 Chrome。
-- 更新完成后重新读取新 SKILL.md；宿主缓存了技能列表时，用新会话刷新。
+- 更新完成后重新读取新 SKILL.md，在用户可见回复中原样展示更新结果中的 introduction。旧版更新器没有返回该字段时，运行 `bash run.sh intro` 读取新介绍；宿主缓存了技能列表时，用新会话刷新。
 - 离线、超时、404 或权限错误时，明确本次检查未完成，可继续当前版；不能报告已经是最新，也不循环重试。
 
 ### 通过客户端网络工具检查
@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/javenvian-del/li-auto-event-trackin
 
 自定义发布源可在本人数据目录配置 `update-source.json`，`baseUrl` 为 HTTPS 目录地址；私有 API 可用 `tokenEnv` 指定本人环境变量名称。私有源须用相应个人授权，不能将令牌发送到公开 raw 地址。显式配置的自定义源保持不变，不擅自切换或共享凭据。
 
-仅查看或修改技能说明不启动业务浏览器。首次指南展示后用 guide-seen 保存本机标记。
+仅查看或修改技能说明不启动业务浏览器。介绍按当前对话展示，不保存全局已读状态；旧 onboarding.json 不再决定是否展示。`start` 返回完整 introduction，`intro` 离线读取同一正文。只有当前对话已经完整介绍且继续具体任务时用 `start --continue`，每次仍检查更新。兼容入口 `guide-seen` 只返回介绍，不写已读状态。
 
 ## 维护发布
 

@@ -28,6 +28,8 @@ curl -fsSL https://raw.githubusercontent.com/javenvian-del/li-auto-event-trackin
 
 ## 使用边界
 
-PRD 和原型只读；独立生成审核表，审核后才创建。已有结果跳过，提交结果不明确就停止查证。截图、凭据和业务数据只保留在本人环境，发布包只有代码与说明。脚本不调用模型 API；AI 理解需求和处理异常仍有模型用量。
+PRD 和原型只读；独立生成审核表，审核后才创建。已有结果跳过，提交结果不明确就停止查证。截图、凭据和业务数据只保留在本人环境，发布包只有代码与说明。
+
+字段校验、页面精确匹配与补图、生成审核表、批量创建和回写由脚本执行，脚本本身不调用模型 API、不消耗模型 token。理解 PRD、梳理埋点、处理歧义与异常，以及 AI 对话和工具结果解读仍消耗 token。[完整使用介绍](references/introduction.md)。
 
 macOS 已验证本机脚本流程；Linux/Windows 与其他客户端需按实际环境检查。Windows 提供 Node/run.cmd 入口，尚未进行完整实机验证。

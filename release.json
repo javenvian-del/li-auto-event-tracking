@@ -1,26 +1,27 @@
 {
   "schemaVersion": 1,
-  "version": "1.2.1",
+  "version": "1.2.2",
   "notes": [
-    "统一首次使用介绍：明确在用户增长运营中心快速批量创建埋点，并自动回写事件名称和事件标识。",
-    "按核心功能、怎么使用、使用前准备三段展示；已看过旧介绍的用户升级后补展示一次。",
+    "修复介绍被提前标记为已读后一直跳过的问题；启动结果直接提供完整介绍，首次对话、只说技能名或升级后原样展示。",
+    "介绍补充脚本与 AI 分工：脚本执行本身不消耗模型 token，AI 理解需求、对话和工具结果解读仍有用量。",
     "每次调用检查云端版本，使用者确认后更新；保留本机配置和登录状态。"
   ],
   "files": {
-    "README.md": "774b5f14a956fd8c9e197fe352ec17352dd8da622424dbf4a9f1a421ad917781",
-    "SKILL.md": "4aeba7988251c6b1a022043ac7c404135622987a850a27931a7b90462501010a",
+    "README.md": "7790f57a68235f9df7c69ecbc86f870823c818782f7ae50f167b8b5dfed22cc0",
+    "SKILL.md": "e9b0531fd6a4e5013e5d679455668fb581daccf590ad1bced1d30d3c04bcbff3",
     "agents/openai.yaml": "ab91f5acee5501d04ac5c91b0cfc75a71bfecefb233b680c2627cb7ef6092cac",
     "install.sh": "d9f30c1b16676c1012069cea05ad27051d6ddc3a73e009c13a914d43be2e935d",
-    "package.json": "1613f207804e7a57b7fbd65904ec025d44e74d9b1e1f1f3f301b1e2bfa73b462",
+    "package.json": "c441105382644783c55a5364e2e4f746a12e96bc0094e5490d05cbac586ba699",
     "references/events-workflow.md": "0663db34090db71ed9cd6da175bc175d4cb4f18d12d095d2c872d4e72ef1a025",
+    "references/introduction.md": "295ef9049359ec71a5523a0871567911af8e83d89d4f16fc8fd72e2855da2921",
     "references/prd-workflow.md": "dc26e5db5c08b3121d1ae09059b94c7a998ff45e634f098846f89fc33652cc91",
     "references/recovery.md": "9d1eecaf53c9216dc57cbda82e22f6fd674c3e303f96ca63bbf44ef7e70a20b1",
-    "references/setup.md": "f21456f220023770828b8daf144ca8a44a2fa4fb8360a9591fc0480c3ceeab94",
+    "references/setup.md": "d002990da8119acbee6362b0752560d894dd2d96c1a5e8f96bb3b3e1eb568274",
     "run.cmd": "ea1a6d573cbf9b2f4e74cbb5f64b859b09e96ced617a50085fcdcfc1cc1ef766",
     "run.sh": "c2db7d0b13db880d63a1ff2d91ad77b10179c69c60340d75a8f86abcd7f47e6a",
     "scripts/batch.mjs": "411834703fdd6251777a2c884a6fb240f5091fe5fcb2bafd2ebb5445f414ad53",
-    "scripts/build-release.mjs": "fe04e5cbcabe9571ed57892980b10ac3bae5c41352768f0b136ad0bfea27d095",
-    "scripts/control.mjs": "be32a63c3ccde53fc3230e4fd63b4d76d81cab1b5ede39428d6eda34239e6935",
+    "scripts/build-release.mjs": "cbb1e29759c762fe954bc6bbc4b39c21dee3700be00a718b63f5e5a4c465b182",
+    "scripts/control.mjs": "41c56572c9fae22a429a347574424ba83eafb2e8d210e434b45d4888e6182258",
     "scripts/draft-prepare.mjs": "2bd5743aef2cd6b9f66c8cae68a1d953ab2447b30bb481d4157efd4fa00cf685",
     "scripts/install.mjs": "b6275f95032cf5d73d547c604d69749781f1625f74b93f7e722b367dc90e9334",
     "scripts/lib/core.mjs": "85518f882a7bd1610831734c116e0c222a316ceda0471bbf4cbc0773c4bb5fc3",
@@ -40,6 +41,7 @@
     "test/core.test.mjs": "ef8747138819a56ad80ae56740783cdbdd2b4640001deb1d1012ed44ca0a8ac5",
     "test/distribution.test.mjs": "05c67a2614be5e17dc1e7c85b8aef327ce54179486ac853d005b52b1c5db8e55",
     "test/draft.test.mjs": "8b9441f69b805af67f53a09757310968610aa7cf2f5875bc892278b1c8746c61",
+    "test/onboarding.test.mjs": "54a499363827a2390801309a41f633fbad21847e6c60d1c0bf64ab942527a557",
     "test/review.test.mjs": "b2e4d8c97de0549403f001661296e74cfa7c0717d8c77eb2a9a049de87eeab18"
   }
 }

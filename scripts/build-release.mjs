@@ -16,8 +16,8 @@ async function walk(folder = '') {
 }
 await walk();
 const release = validateRelease({schemaVersion: 1, version: pkg.version, notes: [
-  '统一首次使用介绍：明确在用户增长运营中心快速批量创建埋点，并自动回写事件名称和事件标识。',
-  '按核心功能、怎么使用、使用前准备三段展示；已看过旧介绍的用户升级后补展示一次。',
+  '修复介绍被提前标记为已读后一直跳过的问题；启动结果直接提供完整介绍，首次对话、只说技能名或升级后原样展示。',
+  '介绍补充脚本与 AI 分工：脚本执行本身不消耗模型 token，AI 理解需求、对话和工具结果解读仍有用量。',
   '每次调用检查云端版本，使用者确认后更新；保留本机配置和登录状态。'
 ], files: Object.fromEntries(Object.entries(files).sort())});
 await fs.writeFile(path.join(root, 'release.json'), JSON.stringify(release, null, 2) + '\n');

@@ -12,7 +12,7 @@ const root=path.dirname(fileURLToPath(import.meta.url)),args=process.argv.slice(
 const option=name=>{const i=args.indexOf(name);return i<0?undefined:args[i+1]};
 const data=path.resolve(process.env.LI_AUTO_TRACKING_DATA||path.join(os.homedir(),'Documents','Codex','li-auto-event-tracking-data'));
 const configFile=path.join(data,'config.json');
-const guideVersion=2;
+const introduction=()=>fs.readFile(path.join(path.dirname(root),'references/introduction.md'),'utf8');
 const child=(file,cfg,extra=[],stdio='inherit')=>new Promise((resolve,reject)=>{
  const p=spawn(process.execPath,[path.join(root,file),...extra,'--config',cfg],{stdio});
  p.once('error',reject);p.once('exit',(code,signal)=>resolve({code,signal}));
@@ -31,15 +31,20 @@ export function parseRows(spec){
 const summary=x=>({status:x.status,total:x.rows?.length??0,completed:x.results?.length??0,counts:(x.results??[]).reduce((a,r)=>(a[r.status]=(a[r.status]||0)+1,a),{}),...(x.error?{failedRow:x.failedRow,error:x.error}:{})});
 async function main(){
  const skillRoot=path.dirname(root);
- if(['start','update-check','doctor','guide-seen','update'].includes(command)){
+ if(command==='intro'||command==='guide-seen'){
+  console.log(JSON.stringify({guideNeeded:true,introduction:await introduction(),...(command==='guide-seen'?{status:'not_saved',message:'按当前对话展示介绍，不保存全局已读标记。'}:{})}));return;
+ }
+ if(['start','update-check','doctor','update'].includes(command)){
   const updateOptions = option('--downloaded-source') ? {download:folderDownloader(option('--downloaded-source'),await loadUpdateSource(data))} : {};
-  if(command==='update') {console.log(JSON.stringify(await applyUpdate(skillRoot,{...updateOptions,version:option('--version'),confirmed:args.includes('--confirmed')})));return;}
+  if(command==='update') {
+   const result=await applyUpdate(skillRoot,{...updateOptions,version:option('--version'),confirmed:args.includes('--confirmed')});
+   console.log(JSON.stringify({...result,guideNeeded:true,introduction:await introduction().catch(()=>undefined)}));return;
+  }
   if(command==='doctor'){console.log(JSON.stringify(await doctor()));return;}
-  if(command==='guide-seen'){await saveJSON(path.join(data,'onboarding.json'),{guideVersion,shownAt:new Date().toISOString()});console.log('{"status":"saved"}');return;}
   const update=await checkUpdate(skillRoot,updateOptions);
   if(command==='update-check'){console.log(JSON.stringify(update));return;}
-  const guide=await fs.readFile(path.join(data,'onboarding.json'),'utf8').then(JSON.parse).catch(()=>null);
-  console.log(JSON.stringify({update,environment:await doctor(),guideNeeded:guide?.guideVersion!==guideVersion}));return;
+  const guideNeeded=!args.includes('--continue');
+  console.log(JSON.stringify({update,environment:await doctor(),guideNeeded,...(guideNeeded?{introduction:await introduction()}:{})}));return;
  }
  if(command==='draft-prepare'||command==='review-create'){
   const result=await child(command==='draft-prepare'?'draft-prepare.mjs':'review-create.mjs',configFile,args.slice(1));process.exitCode=result.code??1;return;
@@ -70,7 +75,7 @@ async function main(){
   // Explicit init changes the selected sheet, never copies credentials into the skill.
   await fs.writeFile(configFile,JSON.stringify(c,null,2),{mode:0o600});console.log(JSON.stringify({status:'configured',configFile}));return;
  }
- if(!['check-login','login','events-check','run','status','pages-check','pages-run'].includes(command))throw Error('用法：start | update-check | update --version X.Y.Z --confirmed | doctor | guide-seen | platform-init --platform-url URL | platform-login | check-platform | draft-prepare --manifest JSON --output DIR | review-create --prepared JSON | init --sheet-url URL --sheet-name NAME | check-login | login | events-check --rows 6-18 | run --rows 6-18 --confirmed | pages-check --manifest JSON | pages-run --manifest JSON --confirmed | status');
+ if(!['check-login','login','events-check','run','status','pages-check','pages-run'].includes(command))throw Error('用法：start [--continue] | intro | update-check | update --version X.Y.Z --confirmed | doctor | platform-init --platform-url URL | platform-login | check-platform | draft-prepare --manifest JSON --output DIR | review-create --prepared JSON | init --sheet-url URL --sheet-name NAME | check-login | login | events-check --rows 6-18 | run --rows 6-18 --confirmed | pages-check --manifest JSON | pages-run --manifest JSON --confirmed | status');
  const c=JSON.parse(await fs.readFile(configFile,'utf8').catch(()=>{throw Error('先运行 init --sheet-url URL')}));
  if(command==='check-login'||command==='login'){
   const result=await child(command==='login'?'run.mjs':'session.mjs',configFile,command==='login'?['--login']:[]);process.exitCode=result.code??1;return;
