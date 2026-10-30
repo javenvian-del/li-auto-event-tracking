@@ -3,6 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import {pathToFileURL} from 'node:url';
 import {dataDirectory} from './distribution.mjs';
+import {assertBrowserExecutionAllowed, browserExecutionStatus} from './browser-permission.mjs';
 
 export async function playwright() {
   try {return await import('playwright');}
@@ -20,6 +21,7 @@ export async function loadConfig() {
   return JSON.parse(await fs.readFile(path.join(dataDirectory(), 'config.json'), 'utf8').catch(() => {throw Error('请先配置本次运营平台地址');}));
 }
 export async function withBrowser(config, callback, {headless = true} = {}) {
+  assertBrowserExecutionAllowed();
   const state = path.resolve(config.stateDir || path.join(dataDirectory(), 'state'));
   await fs.mkdir(state, {recursive: true, mode: 0o700});
   const lockFile = path.join(state, 'run.lock');
@@ -36,6 +38,7 @@ export async function doctor() {
   let chrome = false;
   for (const file of candidates) if (await fs.stat(file).catch(() => null)) chrome = true;
   const browserLibrary = await playwright().then(() => true).catch(() => false);
-  const result = {node: process.versions.node, os: process.platform, chrome, playwright: browserLibrary, localExecution: 'agent_must_verify', networkAndLogin: 'not_checked'};
-  return {...result, status: chrome && browserLibrary ? 'dependencies_ready' : 'setup_needed'};
+  const browserExecution = browserExecutionStatus();
+  const result = {node: process.versions.node, os: process.platform, chrome, playwright: browserLibrary, browserExecution, localExecution: 'agent_must_verify', networkAndLogin: 'not_checked'};
+  return {...result, status: !chrome || !browserLibrary ? 'setup_needed' : browserExecution.status === 'permission_required' ? 'browser_permission_required' : 'dependencies_ready'};
 }

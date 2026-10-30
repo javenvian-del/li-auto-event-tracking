@@ -16,6 +16,7 @@ async function walk(folder = '') {
 }
 await walk();
 const release = validateRelease({schemaVersion: 1, version: pkg.version, notes: [
+  '修复 macOS 受限执行时先启动 Chrome 再崩溃重试的问题；在启动前检查权限，由宿主正式授权后继续。',
   '修复介绍被提前标记为已读后一直跳过的问题；启动结果直接提供完整介绍，首次对话、只说技能名或升级后原样展示。',
   '介绍补充脚本与 AI 分工：脚本执行本身不消耗模型 token，AI 理解需求、对话和工具结果解读仍有用量。',
   '每次调用检查云端版本，使用者确认后更新；保留本机配置和登录状态。'

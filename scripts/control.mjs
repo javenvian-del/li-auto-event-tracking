@@ -8,6 +8,7 @@ import {validateConfig} from './lib/core.mjs';
 import {checkUpdate,applyUpdate,saveJSON,folderDownloader,loadUpdateSource} from './lib/distribution.mjs';
 import {doctor,withBrowser,pageURL} from './lib/runtime.mjs';
 import {createInterface} from 'node:readline/promises';
+import {assertBrowserExecutionAllowed, browserPermissionCode} from './lib/browser-permission.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url)),args=process.argv.slice(2),command=args[0];
 const option=name=>{const i=args.indexOf(name);return i<0?undefined:args[i+1]};
 const data=path.resolve(process.env.LI_AUTO_TRACKING_DATA||path.join(os.homedir(),'Documents','Codex','li-auto-event-tracking-data'));
@@ -31,6 +32,7 @@ export function parseRows(spec){
 const summary=x=>({status:x.status,total:x.rows?.length??0,completed:x.results?.length??0,counts:(x.results??[]).reduce((a,r)=>(a[r.status]=(a[r.status]||0)+1,a),{}),...(x.error?{failedRow:x.failedRow,error:x.error}:{})});
 async function main(){
  const skillRoot=path.dirname(root);
+ if(['check-login','login','events-check','run','pages-check','pages-run','check-platform','platform-login'].includes(command))assertBrowserExecutionAllowed();
  if(command==='intro'||command==='guide-seen'){
   console.log(JSON.stringify({guideNeeded:true,introduction:await introduction(),...(command==='guide-seen'?{status:'not_saved',message:'按当前对话展示介绍，不保存全局已读标记。'}:{})}));return;
  }
@@ -106,4 +108,7 @@ async function main(){
  if(result.code!==0){console.error(JSON.stringify({status:'stopped',logPath,message:mode==='check'?'预检停止；未创建事件或回写表格。':'创建批次停止，读取本次日志末尾定位异常；不得自动重跑提交。'}));process.exitCode=1;return;}
  const x=JSON.parse(await fs.readFile(resultsPath,'utf8'));console.log(JSON.stringify({...summary(x),resultsPath}));
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await main().catch(e=>{console.error(e.message);process.exitCode=1});
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await main().catch(e=>{
+ if(e.code===browserPermissionCode){console.error(JSON.stringify({status:'permission_required',code:e.code,message:e.message,browserStarted:false}));process.exitCode=77;}
+ else{console.error(e.message);process.exitCode=1;}
+});

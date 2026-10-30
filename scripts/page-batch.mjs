@@ -3,6 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {hashImage,validateConfig} from './lib/core.mjs';
+import {assertBrowserExecutionAllowed} from './lib/browser-permission.mjs';
 
 const root=path.dirname(fileURLToPath(import.meta.url));
 const args=process.argv.slice(2);
@@ -16,6 +17,7 @@ if(!mode||args.filter(x=>x==='--check'||x==='--create').length!==1)throw Error('
 const manifestPath=path.resolve(option('--manifest')??'');
 const configPath=path.resolve(option('--config')??'');
 if(!option('--manifest')||!option('--config'))throw Error('需要 --manifest 和 --config');
+assertBrowserExecutionAllowed();
 
 const config=JSON.parse(await fs.readFile(configPath,'utf8'));validateConfig(config);
 const raw=JSON.parse(await fs.readFile(manifestPath,'utf8').catch(()=>{throw Error('无法读取页面清单');}));

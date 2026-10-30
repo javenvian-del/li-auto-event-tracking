@@ -5,10 +5,12 @@ import {createInterface} from 'node:readline/promises';
 import {stdin,stdout} from 'node:process';
 import {validateConfig} from './lib/core.mjs';
 import {checkSessions} from './lib/session.mjs';
+import {assertBrowserExecutionAllowed} from './lib/browser-permission.mjs';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const args=process.argv.slice(2);
 if(args.includes('--help')) {console.log('node run.mjs --login --config config.json\n此脚本只负责交互登录；事件预检和创建必须通过 control.mjs。');process.exit(0);}
 if(!args.includes('--login')||args.some(a=>a==='--check'||a==='--create')) throw Error('旧的直接检查/创建入口已禁用；请使用 run.sh events-check 或 run.sh run');
+assertBrowserExecutionAllowed();
 const ci=args.indexOf('--config'),cfgPath=path.resolve(ci<0?path.join(root,'config.json'):args[ci+1]??'');
 const config=JSON.parse(await fs.readFile(cfgPath,'utf8').catch(()=>{throw Error('请先将config.example.json复制为config.json');}));
 validateConfig(config);

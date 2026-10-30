@@ -17,6 +17,17 @@ Codex 选择“本机 / This computer”而非 Cloud；Local 和 Worktree 都在
 
 `start` 的 doctor 只检查依赖，不证明网络或登录可用，也不会仅凭 Linux/Windows/macOS 判定本机/云端。由代理结合宿主环境确认。已明确连通本机的远程控制会话按实际能力处理。
 
+## 浏览器执行权限
+
+启动 Chrome 前确认当前宿主允许本机浏览器进程。已知 Codex/macOS 的受限执行环境（`CODEX_SANDBOX=seatbelt`）会令 Chrome 在应用注册阶段退出并触发系统崩溃报告；脚本检测到时返回 `BROWSER_EXECUTION_PERMISSION_REQUIRED`，在浏览器启动、运行锁和批次状态写入之前停止。
+
+- Codex 提供 `exec_command` 的 `sandbox_permissions` 时，对需要 Chrome 的具体命令使用正式的 `require_escalated` 审批路径，并说明该命令要检查登录、读取表格或执行已授权批次。不要先在已知受限环境试启动一次。既有授权按宿主规则复用；被拒绝时停止相关步骤。
+- Claude Code 等其他客户端使用其自身授权机制；不能仅凭客户端名称认定已有权限。未检测出已知限制，也不等于已验证全部启动权限。
+- 涉及 Chrome 的入口包括 check-login、login、events-check、run、check-platform、platform-login、pages-check、pages-run；draft-prepare 仅在缺图且需要查询平台时才启动 Chrome。已有 PRD 图片的本地整理可以继续。
+- 不清除或伪造环境标记，不关闭安全检查、不修改全局权限，也不隐藏系统崩溃提示。只在正式获准的执行环境重试对应命令。
+
+`start`、`intro`、更新检查、配置保存和依赖检查本身不启动 Chrome。仅查看用法时，不提前申请业务浏览器权限。
+
 ## 一条命令安装
 
 macOS/Linux 的终端或本机 AI 助手执行：

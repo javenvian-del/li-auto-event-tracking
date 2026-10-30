@@ -7,10 +7,12 @@ import {Sheet} from './lib/sheet.mjs';
 import {Platform} from './lib/platform.mjs';
 import {validateConfig,processRow,fingerprint,shouldSkipRecorded,hashImage} from './lib/core.mjs';
 import {checkSessions} from './lib/session.mjs';
+import {assertBrowserExecutionAllowed} from './lib/browser-permission.mjs';
 
 const root=path.dirname(fileURLToPath(import.meta.url)),args=process.argv.slice(2),ci=args.indexOf('--config');
 const mode=args.includes('--check')?'check':args.includes('--create')?'create':null;
 if(ci<0||!args[ci+1]||!mode||args.filter(x=>x==='--check'||x==='--create').length!==1)throw Error('用法：node batch.mjs (--check | --create) --config 配置文件');
+assertBrowserExecutionAllowed();
 const config=JSON.parse(await fs.readFile(path.resolve(args[ci+1]),'utf8'));validateConfig(config);
 const local=path.resolve(config.stateDir||path.join(root,'.local'));
 const key=createHash('sha256').update(config.sheetUrl.split('?')[0]+'\n'+config.sheetName).digest('hex').slice(0,16);
