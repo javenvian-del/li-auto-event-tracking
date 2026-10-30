@@ -1,0 +1,6 @@
+interface:
+  display_name: "理想汽车埋点梳理与批量创建"
+  short_description: "整理多种 PRD 和埋点表、自动补图，审核后批量创建并回写"
+  default_prompt: "使用 $li-auto-event-tracking 处理我的 PRD 或埋点表；先检查运行环境和云端更新，再整理独立审核表，确认后创建。"
+policy:
+  allow_implicit_invocation: true
