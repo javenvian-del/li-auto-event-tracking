@@ -1,0 +1,17 @@
+node_modules/
+.local/
+.installation.json
+*.lock
+config.json
+update-source.json
+.env*
+work/
+outputs/
+data/
+runtime/
+*.png
+*.jpg
+*.jpeg
+*.xlsx
+*.zip
+*.log
